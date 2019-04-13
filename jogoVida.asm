@@ -110,8 +110,9 @@ B:
 percorre: # percorre a matriz
 	beq t4, t6, pixel # preenche o pixel da bacteria
 	beq t5, a1, fim # termina a matriz
-	beq s9, s8, soma # calcula a posicao x, y da matriz
-	lw t6, 0(t3) 
+	bgt s9, s8, soma # calcula a posicao x, y da matriz
+fimsoma:
+	lw t6, 0(t3)
 	j verifica
 cont:
 	addi t3, t3, 4
@@ -122,7 +123,7 @@ cont:
 soma:	#s10 = posicao x / s9 = posicao y
 	addi s10, s10, 1
 	addi s9, zero, 1
-	j cont
+	j fimsoma
 
 verifica: #verifica o proximo estado do pixel
 	beq s5, zero, B1
