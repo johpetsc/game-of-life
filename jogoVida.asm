@@ -2,13 +2,13 @@
 	endereco: .word 0x1000 #endereco inicial bitmap
 	fundo: .word 0x20B2AA #cor de fundo
 	amarelo: .word 0x006400
-	x: .word 5 #coordenada x-1
-	y: .word 5 #coordenada y-1
-	xmul: .word 4 # multiplicador para a linha
-	ymul: .word 64 # multiplicador para a coluna
+	ymul: .word 4 # multiplicador para a linha
+	xmul: .word 64 # multiplicador para a coluna
 	matrizA: .space 0x400 #armazena espaco para a matriz A
 	matrizB: .space 0x400 
 	newline: .asciz "\n"
+	mensagem: .asciz "\nEntre a coordenada da bacteria(0 para parar):\n"
+	virgula: .asciz ", "
 .text
 	
 matA:	#carrega o endereco da matriz A
@@ -42,24 +42,35 @@ init:
 	lw s1, fundo 
 	lw s2, amarelo
 	li s3, 0x1400 # carrega o endereco final (16x16x4=1024, hexadecimal = 400)
-	lw s4, x # calcula o endereco so primeiro pixel
+
+entrada:
+	la a0, mensagem
+	li a7, 4
+	ecall
+	li a7, 5
+	ecall
+	beq a0, zero, estadoA
+	mv s4, a0
+	addi s4, s4, -1
 	lw t3, xmul
 	mul s4, s4, t3
-	lw t3, y
+	li a7, 5
+	ecall
+	beq a0, zero, estadoA
+	mv t3, a0
+	addi t3, t3, -1
 	lw s6, ymul
 	mul t3, t3, s6
 	add s4, s4, t3 #endereco da coordenada
+	
 
 estado:	#constroi o estado inicial da matriz
 	la t3, matrizA
 	add t3, t3, s4
 	addi a0, zero, 1
 	sw a0, 0(t3)
-	sw a0, 4(t3)
-	sw a0, 68(t3)
-	sw a0, -60(t3)
-	sw a0, -56(t3)
 	sub t3, t3, s4
+	j entrada
 
 estadoA:
 	li a0, 1000
@@ -112,7 +123,7 @@ soma:	#s10 = posicao x / s9 = posicao y
 	addi s10, s10, 1
 	addi s9, zero, 1
 	j cont
-	
+
 verifica: #verifica o proximo estado do pixel
 	beq s5, zero, B1
 	la t2, matrizA
@@ -189,7 +200,7 @@ vida:	#estado 1
 	
 pixel:	#preenche o pixel
 	addi t5, t5, -1
-	lw t6, xmul
+	lw t6, ymul
 	mul t6, t6, t5
 	add s0, s0, t6
 	sw s2, 0(s0)
