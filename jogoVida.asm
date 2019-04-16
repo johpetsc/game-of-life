@@ -1,7 +1,7 @@
 .data
 	endereco: .word 0x1000 #endereco inicial bitmap
-	fundo: .word 0x20B2AA #cor de fundo
-	amarelo: .word 0x006400
+	fundo: .word 0x2B7362 #cor de fundo
+	amarelo: .word 0x6C0C29
 	ymul: .word 4 # multiplicador para a linha
 	xmul: .word 64 # multiplicador para a coluna
 	matrizA: .space 0x400 #armazena espaco para a matriz A
